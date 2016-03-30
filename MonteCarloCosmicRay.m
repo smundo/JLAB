@@ -2,6 +2,7 @@ clear
 t=[];
 tphys=[];
 tcon=[];
+D=[];
 c=physconst('LightSpeed')/100000000;
 h=103;
 N=10000;
@@ -22,10 +23,10 @@ for i=1:N
         m{3*i+1}=[y(i) yf(i)];
         m{3*i+2}=[h 0];
         di=sqrt(dx(i)^2+dy(i)^2+h^2);
-        r{i}=di;
         t=[t di/(10*v(i)) + dt(i)/10 + 24];
         tphys=[tphys di/(10*v(i))];
         tcon=[tcon dt(i)/10];
+        D=[D di];
         j=j+1;
     end
 end
@@ -38,7 +39,7 @@ end
 % end
 
 n=m(find(~cellfun(@isempty,m)));
-r=r(find(~cellfun(@isempty,r)));
+% r=r(find(~cellfun(@isempty,r)));
 % t=t(find(~cellfun(@isempty,t)));
 % D(1:length(r))=r{1:length(r)};
 % T(1:length(t))=t{1:length(t)};
