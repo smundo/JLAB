@@ -21,7 +21,7 @@ for i=1:N
         m{3*i+2}=[h 0];
         di=sqrt(dx(i)^2+dy(i)^2+h^2);
         r{i}=di;
-        t=[t di/(10*v(i)) + dt(i)/10 + 50];
+        t=[t di/(10*v(i)) + dt(i)/10 + 24];
         
         j=j+1;
     end
