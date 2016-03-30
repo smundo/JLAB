@@ -1,7 +1,9 @@
 clear
 t=[];
+tphys=[];
+tcon=[];
 c=physconst('LightSpeed')/100000000;
-h=100;
+h=103;
 N=10000;
 theta=2*pi*rand(N,1);
 phi=random('norm',0.0000000,1.3/sqrt(2),[N,1]);
@@ -10,7 +12,7 @@ y=40*rand(N,1);
 dx=diag(h*diag(abs(tan(phi)))*diag(cos(theta)));
 dy=diag(h*diag(abs(tan(phi)))*diag(sin(theta)));
 v=(2.998-0.2998)*rand(N,1)+0.2998*ones(N,1);
-dt=-dx/c;
+dt=-dx*1.5/c;
 xf=x+dx;
 yf=y+dy;
 j=0;
@@ -22,7 +24,8 @@ for i=1:N
         di=sqrt(dx(i)^2+dy(i)^2+h^2);
         r{i}=di;
         t=[t di/(10*v(i)) + dt(i)/10 + 24];
-        
+        tphys=[tphys di/(10*v(i))];
+        tcon=[tcon dt(i)/10];
         j=j+1;
     end
 end
