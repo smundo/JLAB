@@ -21,7 +21,7 @@ for i=1:N
         m{3*i+2}=[h 0];
         di=sqrt(dx(i)^2+dy(i)^2+h^2);
         r{i}=di;
-        t=[t di/(10*v(i)) + dt(i)/10];
+        t=[t di/(10*v(i)) + dt(i)/10 + 50];
         
         j=j+1;
     end
@@ -42,6 +42,6 @@ r=r(find(~cellfun(@isempty,r)));
 figure(1)
 plot3(n{1:length(n)})
 figure(2)
-hist(t+50*ones(1,length(t)),length(t))
+hist(t,length(t))
 % plot3(s{1:24},'*')
 j/N
