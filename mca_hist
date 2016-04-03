@@ -1,0 +1,19 @@
+function [y,x]=mca_hist(N,t)
+T=linspace(0,t,length(N));
+a=[];
+b=[];
+for i=1:length(T)
+    a=[a T(i)*ones(1,N(i))];
+    b=[b N(i)*ones(1,N(i))];
+    
+end
+%x=a;
+%y=hist(x,length(x));
+%hist(x,length(x))
+x=a;
+y=b;
+%[y,x]=hist(a,2048);
+%hist(a,length(a))
+end
+    
+    
