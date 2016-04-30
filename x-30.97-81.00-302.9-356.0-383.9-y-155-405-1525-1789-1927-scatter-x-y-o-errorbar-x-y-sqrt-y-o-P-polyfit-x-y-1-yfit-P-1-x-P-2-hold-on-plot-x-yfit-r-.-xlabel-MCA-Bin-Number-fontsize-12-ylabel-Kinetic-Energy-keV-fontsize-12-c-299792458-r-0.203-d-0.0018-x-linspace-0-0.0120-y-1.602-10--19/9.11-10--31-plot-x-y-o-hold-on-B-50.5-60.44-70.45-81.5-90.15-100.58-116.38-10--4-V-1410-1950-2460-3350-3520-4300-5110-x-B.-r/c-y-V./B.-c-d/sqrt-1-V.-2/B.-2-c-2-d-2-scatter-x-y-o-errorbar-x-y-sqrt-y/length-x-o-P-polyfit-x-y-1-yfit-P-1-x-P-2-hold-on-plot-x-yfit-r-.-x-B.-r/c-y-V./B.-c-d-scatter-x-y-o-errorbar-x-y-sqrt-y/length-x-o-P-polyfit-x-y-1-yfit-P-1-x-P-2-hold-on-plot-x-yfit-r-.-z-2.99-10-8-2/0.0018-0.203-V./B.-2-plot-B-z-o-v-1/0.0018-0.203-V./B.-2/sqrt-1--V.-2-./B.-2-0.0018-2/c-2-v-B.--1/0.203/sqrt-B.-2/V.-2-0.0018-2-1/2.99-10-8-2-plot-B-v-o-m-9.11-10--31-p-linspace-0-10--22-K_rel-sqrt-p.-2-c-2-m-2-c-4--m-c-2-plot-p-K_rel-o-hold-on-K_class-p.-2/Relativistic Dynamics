@@ -1,0 +1,59 @@
+%%%%%%%%%%Ba Calibration%%%%%%%%%
+% x=[30.97, 81.00, 302.9, 356.0, 383.9];
+% y=[155,405,1525,1789,1927]
+% scatter(x,y,'o')
+% errorbar(x,y,sqrt(y),'o')
+% P = polyfit(x,y,1);
+% yfit = P(1)*x+P(2);
+% hold on;
+% plot(x,yfit,'r-.');
+% xlabel('MCA Bin Number','fontsize',12)
+% ylabel('Kinetic Energy (keV)','fontsize',12)
+% 
+c=299792458;
+r=0.203
+d=0.0018
+% x=linspace(0,0.0120);
+% y=1.602*10^(-19)/(9.11*10^(-31));
+% plot(x,y, 'o')
+% hold on;
+
+B=[50.5 60.44 70.45 81.5 90.15 100.58 116.38]*10^(-4);
+V=[1410 1950 2460 3350 3520 4300 5110];
+
+%%%%%%%%e/m relativistic%%%%%%%%%%%
+x=B.*r/c
+y=V./(B.*c*d)/sqrt(1-V.^2/(B.^2*c^2*d^2))
+scatter(x,y,'o')
+errorbar(x,y,sqrt(y)/length(x),'o')
+P = polyfit(x,y,1);
+yfit = P(1)*x+P(2);
+hold on;
+plot(x,yfit,'r-.');
+
+%%%%%%%e/m non-relativistic%%%%%%%%%%%%%
+% x=B.*r/c
+% y=V./(B.*c*d)
+% scatter(x,y,'o')
+% errorbar(x,y,sqrt(y)/length(x),'o')
+% P = polyfit(x,y,1);
+% yfit = P(1)*x+P(2);
+% hold on;
+% plot(x,yfit,'r-.');
+
+
+
+% % z=((2.99*10^8)^2/(0.0018*0.203))*V./B.^2
+% % plot(B,z,'o')
+% 
+% v=(1/(0.0018*0.203))*V./B.^2/sqrt(1-(V.^2)./(B.^2*0.0018^2)/c^2);
+% %v=B.^(-1)/0.203/sqrt(B.^2/V.^2*0.0018^2-1/(2.99*10^8)^2)
+% plot(B,v,'o')
+
+% m=9.11*10^(-31)
+% p=linspace(0,10^(-22));
+% K_rel=sqrt(p.^2*c^2+m^2*c^4)-m*c^2
+% plot(p,K_rel,'o')
+% hold on;
+% K_class=p.^2/(2*m)
+% plot(p,K_class,'o')
