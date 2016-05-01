@@ -1,0 +1,376 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: http://web.mit.edu/8.13/matlab/fittemplate11.m
+% Contributors: JLAB Staff, Jim Kiger, William McGehee, Xuangcheng Shao
+% Last Updated: 2011-Oct-25
+%
+%
+% This Matlab script is intended to be used for linear and non-linear
+% fitting problems in experimental physics.
+%
+% It closely follows the material presented in 
+% "Data Reduction and Error Analysis for the Physical Sciences: 3rd Editon"
+% by Philip R. Bevington and D. Keith Robinson
+% Students are responsible for understanding the underlying methods,
+% DO NOT USE THIS SCRIPT AS A BLACK BOX!!!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% f1=readchn('B(50.5)V(1.41).Chn');
+% f2=readchn('B(60.44)V(1.95).Chn');
+% f3=readchn('B(70.45)V(2.46).Chn');
+% f4=readchn('B(81.5)V(3.35).Chn');
+% f5=readchn('B(90.15)V(3.52).Chn');
+% f6=readchn('B(100.58)V(4.30).Chn');
+% f7=readchn('B(116.38)V(5.35).Chn');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%B=50%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% nmin=4;
+% nmax=2;
+% x=f1.chan;
+% x=x';
+% y=f1.count;
+% x=x(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% y=y(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% sig=sqrt(y);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%B=60%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% nmin=46;
+% nmax=27;
+% x=f2.chan;
+% x=x';
+% y=f2.count;
+% x=x(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% y=y(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% sig=sqrt(y);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%B=70%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% nmin=42;
+% nmax=27;
+% x=f3.chan;
+% x=x';
+% y=f3.count;
+% x=x(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% y=y(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% sig=sqrt(y);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%B=80%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% nmin=54;
+% nmax=9;
+% x=f4.chan;
+% x=x';
+% y=f4.count;
+% x=x(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% y=y(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% sig=sqrt(y);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%B=90%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% nmin=39;
+% nmax=41;
+% x=f5.chan;
+% x=x';
+% y=f5.count;
+% x=x(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% y=y(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% sig=sqrt(y);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%B=100%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% nmin=60;
+% nmax=47;
+% x=f6.chan;
+% x=x';
+% y=f6.count;
+% x=x(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% y=y(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% sig=sqrt(y);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%B=116%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% nmin=60;
+% nmax=40;
+% x=f7.chan;
+% x=x';
+% y=f7.count;
+% x=x(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% y=y(find(y==max(y))-nmin:find(y==max(y))+nmax);
+% sig=sqrt(y);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Gain%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+x=124:2048;
+y=G(124:2048)';
+%%%%%%%%%%%peakA$$$$$$$$$$
+nmin=135-124;
+nmax=178-124;
+%%%%%%%%%%%%peakB$$$$$$$$$$
+nmin=391-124;
+nmax=430-124;
+%%%%%%%%%%%%peakC$$$$$$$$$$
+% nmin=1505-124;
+% nmax=1540-124;
+%%%%%%%%%%%%peakD$$$$$$$$$$
+% nmin=1765-124;
+% nmax=1820-124;
+%%%%%%%%%%%%peakE$$$$$$$$$$
+% nmin=1900-124;
+% nmax=1950-124;
+x=x(nmin:nmax);
+y=y(nmin:nmax);
+
+sig=sqrt(y);
+% f=fit(x',y','gauss1');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% There are other ways to assign your error vector
+% You might want to use one of these three methods below.
+% sigma = 2.5;                  % Constant error value, variance of gauss3 data set is 6.25.
+% sig = ones(size(x))*sigma;    % creates a constant vector the same size as 'x' w/value sigma
+% sig = mydata(:,3);            % Assigns the third column to a vector called
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% At this point you should know whether you want to perform a 'linear' or 'non-linear fit 
+% to your data set.  Select and uncomment the appropriate section to proceed
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% ** LINEAR FITS **
+% If you wish to fit your data to a straight line, you can use the function
+% 'fitlin.m'  This function is also taken directly from the pages of Bevington 
+% and Robinson Ch. 6 (p. 114) and it is very easy to follow.  The usage of
+% fitlin is as follows:
+%
+% [a,aerr,chisq,yfit] = fitlin(x,y,sig)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ** NON-LINEAR FITTING **
+% For non-linear fits, you will need to create a Matlab 'function handle' for your model
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Some useful non-linear model functions are listed here:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function_sin        = @(x,a) a(1)*sin(a(2)*x+a(3));
+function_gaussian   = @(x,a) a(1)*(exp(-((x-a(2))/a(3)).^2));
+function_lorentzian = @(x,a) a(1)*(a(2)/(2*pi)./(((x-a(3)).^2)+(a(2)^2/4)));
+function_poisson    = @(x,a) a(1)*exp(x*log(a(2))-a(2)-gammaln(x+1));
+function_NIST       = @(x,a) a(1)*exp(-a(2)*x) +...
+                             a(3)*exp(-((x-a(4)).^2)/a(5)^2) +...
+                             a(6)*exp(-((x-a(7)).^2)/a(8)^2);
+function_bev82      = @(x,a) a(1)+a(2)*exp(-x*a(3)-a(4));
+function_poly       = @(x,a) a(1)*(x-a(2)).^2 +a(3);
+function_poly3       = @(x,a) a(1)*x.^3 +a(2)*x.^2 +a(3)*x +a(4);
+function_polym       = @(x,a) a(1)*x.^9 +a(2)*x.^8 +a(3)*x.^7 +a(4)*x.^6 +a(5)*x.^5+a(6)*x.^4 +a(7)*x.^3 +a(8)*x.^2 +a(9)*x +a(10);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For non-linear fits using the Levenberg-Marquardt method, if you want to use
+% analytic expressions instead of numerical derivatives (not very common), enter the
+% expressions for derivatives in the following cell dYda, and let sgn be 1
+% instead of 0. Note: the definition of dYda cannot be commented out since
+% it has to be defined no matter whether it is actually used.
+sgn=0;  % Ignore the following analytic derivatives and calculate them numerically instead (usual case)
+dYda={@(x,a) 1,
+     @(x,a) exp(-x/a(4)),
+     @(x,a) exp(-x/a(5)),
+     @(x,a) a(2)/a(4)^2*exp(-x/a(4)).*x,
+     @(x,a) a(3)/a(5)^2*exp(-x/a(5)).*x};
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Create a vector containing your initial estimates for the model
+% parameters.  It is important to make good estimates of these initial
+% values to ensure that you chi-squared minimization doesn't occur in a
+% 'local' minimum.
+% a0 = [10 900 80 27 225];              % Initial parameter estimates for Bevington Ch. 8 Dataset
+% a0 = [94 .0105 99 63 25 71 180 20];   % Initial estimates for gauss1.txt
+% a0 = [-0.000436 0.008224 -0.06178 0.2358 -0.5092 0.8803 -2.17 4.629 -4.114 1.655]; % Initial estimates for gauss3.txt
+% a0=  [1 1 1];
+% a0=[1/(std(y)*sqrt(2*pi)) x(find(y==max(y)))+8 std(y)];
+a0=[f.a1 f.b1 f.c1];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Selection of Chi-Squared Minimization Algorithm
+% Junior Lab Techincal Staff have written two Matlab fitting scripts which you may find useful:
+% 'levmar.m' implements the Marquardt Method:
+%             Bevington and Robinson Section 8.6, Page 161
+% 'gradsearch.m' implements the Gradient-Search Method
+%             Bevington and Robinson Section 8.4, Page 153
+%
+% To select the 'levmar.m' fitting script, set algselect=0.
+% To select the 'gradsearch.m' fitting script, set algselect=1.
+%
+% a0=[max(y) 1];
+algselect=0;
+if algselect==0
+	[a,aerr,chisq,yfit,corr] = levmar(x,y,sig,function_gaussian,a0,dYda,sgn);
+else 
+	[a,aerr,chisq,yfit] = gradsearch(x,y,sig,function_gaussian,a0);
+end
+% a=a0;
+%
+%    Inputs:  x         -- the x data to fit
+%             y         -- the y data to fit
+%             sig       -- the uncertainties on the data points
+%             fitfun    -- the name of the function to fit to
+%             a0        -- the initial guess at the parameters   
+%             dYda      -- analytical derivatives for fitting function
+%             sgn       -- flat to select analytical or numerical derivatives
+%
+%    Outputs: a         -- the best fit parameters
+%             aerr      -- the errors on these parameters
+%             chisq     -- the final value of chi-squared
+%             yfit      -- the value of the fitted function at the points in x
+%             corr      -- error matrix = inverse of the curvature matrix alpha (output from levmar.m only)
+%
+%
+% IMPORTANT NOTE  - since both levmar.m and gradsearch.m are iterative algorithms, you can vary
+% the step size and tolerance used in the fitting process.  These are
+% specified within the subroutines 'levmar.m' and 'gradsearch.m'
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Always report statistics on the 'Goodness of Fit'
+%%% More information can be found in Bevington's Appendix C and                              
+%%% in Matlab's Online Help searching under 'goodness of fit' 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fprintf(1,'Uncertainties');
+fprintf(1,'%9.1e',aerr);
+fprintf(1,'\n');
+level = 0.68;                   % confidence level 68% =1-sigma, 95% = 2-sigma
+dof  = length(x) - length(a);
+fprintf(1,'Degrees of Freedom = %5d \n',dof);
+RChiSquare = chisq/dof';
+prob=100*(1-chi2cdf(chisq,dof)); % This is the Matlab equivalent of Bevington Table C.4
+fprintf(1,'Reduced Chi-Squared=%6.2f; probability=%6.1f percent \n',RChiSquare,prob);
+if algselect==0
+	fprintf(1,'\n Elements of the error matrix (Marquardt method only)\n');
+	for i=1:length(a)
+		fprintf(1,'%10.4f',corr(i,:));
+		fprintf(1,'\n');
+	end
+end
+residuals = y-yfit;
+rss=sum(residuals.^2);
+rstd=std(residuals);
+fprintf(1,'Residual Sum of Squares = %8.3f \n',rss);
+fprintf(1,'Residual Standard Deviation = %8.3f \n',rstd);
+fprintf(1,'\n');
+[a',aerr']
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ** Confidence Intervals **
+% The confidence bounds for fitted coefficients are given by
+% [b-t*sqrt(S),b+t*sqrt(S)].
+% b are the coefficients produced by the fit, t depends on the confidence
+% level, and is computed using the inverse of student's t cumulative 
+% distribution function, S is the vector of diagonal elements from the
+% estimated covariance matrix.  'aerr' is the square root of 'S'
+width = tinv(level,dof)*aerr; 
+lower = a - width;
+upper = a + width;
+FitResults = [a', lower', upper'];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Here we plot the basic figure.  Be sure to double check the sizes and colors
+% of all your labels and markers to ensure their visibility to your audience.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+xx=linspace(min(x),max(x));
+figure(3);
+% axis([1820 1900 0 3])
+% subplot(2,1,1);
+errorbar(x,y,sig,'*');
+% axis([0 250 0 150]);
+hold on;
+% plot(linspace(min(x),max(x)),a(1)*(linspace(min(x),max(x))-a(2)).^2 +a(3),'r','LineWidth',3);
+% plot(x,yfit,'LineWidth',2)
+plot(xx,a(1)*(exp(-((xx-a(2))/a(3)).^2)),'LineWidth',2)
+% xlabel('V_{acc} [Volts]','fontsize',12);  
+% ylabel('I_a [nA]','fontsize',12);
+% xlabel('Channel Number','fontsize',12);  
+% ylabel('Count','fontsize',12);
+xlabel('Voltage [V]','fontsize',12);  
+ylabel('Rate [s^{-1}]','fontsize',12);
+legend('data','y_{fit}')
+% title({'Descriptive Title: e.g. Determination of Fine Structure Splitting in Hydrogen'},'fontsize',12);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A certain amount of information placed on a graph can make it more easily
+% understood by an audience who perhaps cannot hear everything you say
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ax=(max(x)+min(x))/2 -0.04 ;
+% ax=min(x);
+ay=(max(y)+min(y))/2-0.1;
+% ay=max(y);
+inc=0.1;
+str1=num2str(RChiSquare,2);
+
+str2=num2str(a(2),8);
+% str3=num2str(aerr(1));
+str4=num2str(aerr(2));
+% str5=num2str(aerr(3));
+% str6=num2str(aerr(4));
+% str7=num2str(aerr(5));
+% str8=num2str(aerr(6));
+% str9=num2str(aerr(7));
+% str10=num2str(aerr(8));
+% str11=num2str(aerr(9));
+% str12=num2str(aerr(10));
+% text(ax,ay,['n_{peak}=' str2 ' \pm ' str4 ' chn']);
+text(ax,ay,['V_{central}=' str2 ' \pm ' str4 ' V']);
+% ax=ax+1;
+% ay=ay+0.1;
+text(ax,ay-inc,['Probability =' num2str(prob,2),' %']);
+text(ax,ay-2*inc,['\chi^2_{\nu-1} = ' str1]);
+% text(ax,ay-3*inc,['t_{real}=' num2str(f6.realtime) ' seconds'])
+% text(ax,ay-3*inc,['P1=' num2str(a(1)) ' \pm ' str3]);
+% text(ax,ay-4*inc,['P2=' num2str(a(2)) ' \pm ' str4]);
+% text(ax,ay-5*inc,['P3=' num2str(a(3)) ' \pm ' str5]);
+% text(ax,ay-6*inc,['P4=' num2str(a(4)) ' \pm ' str6]);
+% text(ax,ay-7*inc,['P5=' num2str(a(5)) ' \pm ' str7]);
+% text(ax,ay-8*inc,['P6=' num2str(a(6)) ' \pm ' str8]);
+% text(ax,ay-9*inc,['P7=' num2str(a(7)) ' \pm ' str9]);
+% text(ax,ay-10*inc,['P8=' num2str(a(8)) ' \pm ' str10]);
+% text(ax,ay-11*inc,['P9=' num2str(a(9)) ' \pm ' str11]);
+% text(ax,ay-12*inc,['P10=' num2str(a(10)) ' \pm ' str12]);
+% 
+% % text(122,45,['(b_3 - b_2)']);
+% % text(119,35,[str1 ' \pm ' str2 ' nm']);
+% % % plot(zeros(size(y))+a(4),y,'r-');
+% % % plot(zeros(size(y))+a(7),y,'r-');
+% text(0,2.9,'Model: y(x) =p1*x^9 + p2*x^8 + p3*x^7 + p4*x^6','fontsize',12);
+% text(0,2.9-1.2*inc,'p5*x^5 + p6*x^4 + p7*x^3 + p8*x^2 + p9*x + p10','fontsize',12)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Residuals qualitatively demonstrate the agreement between the model
+% function with the best fit parameters and the data being modeled
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% subplot(2,1,2);
+% plot(x,zeros(size(x)),'r-');
+% hold on;
+% plot(x,residuals,'b.'); 
+% xlabel('X-Axis Label [units]','fontsize',12);  
+% ylabel('Y-Axis Label [units]','fontsize',12);
+% title({'Residuals should have \mu = 0 and lack structure','Use graphics to guide the eye...e.g. red line at zero'},'fontsize',12);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Other scientific disciplines use a variety of related terms related to
+% the evaluation of 'Goodness of Fit'.  In order to help you understand
+% some of these terms, found in the Matlab help system, we list here some
+% useful definitions.
+% ---------------------   Curve Fitting Definitions   ------------------
+%
+% y = response value
+% y_tilde = fit to the response value
+% y_bar = mean
+%
+% SSE (Sum of Squares due to Error)  = weighted sum of (y - y_tilde)^2.
+% SSR (Sum of Squares of Regression) = weighted sum of (y_tilde - y_bar)^2
+% SST (Total Sum of Squares)         = weighted sum of (y - y_bar)^2
+% It follows then that SST = SSE + SSR
+%
+% R-square = SSR / SST = 1 - (SSE / SST)
+% v - degree of freedom
+% v = n - m (number of response values - number of fitted coefficients)
+%
+% Adjusted R-square = 1 - (SSE / SST) * (n - 1) / v
+% Adjusted R-square <= 1
+% 1, with a value closer to 1 indicating a better fit.
+% MSE (Mean Squared Error) = SSE / v (the same as R-chi-square)
+% RMSE (Root Mean Squared Error) = sqrt(MSE) 
+% A RMSE value closer to 0 indicates a better fit.
+% ----------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
